@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { NavbarComponent } from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,9 +33,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NavbarComponent />
-        <main className="container mx-auto mt-8 px-4" style={{minHeight: "calc(100vh - 210px)"}}>{children}</main>
-        <Footer />
+        <SessionProvider>
+          <NavbarComponent />
+          <main
+            className="container mx-auto mt-8 px-4"
+            style={{ minHeight: "calc(100vh - 210px)" }}
+          >
+            {children}
+          </main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+import { signOut } from "@/auth";
+
 export default function Footer() {
   const date = new Date();
 

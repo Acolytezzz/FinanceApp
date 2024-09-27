@@ -1,11 +1,18 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { register } from "@/action/user";
+import { getSession } from "@/lib/getSession";
+import { redirect } from "next/navigation";
 
-const SignUp = () => {
+const SignUp = async () => {
+  const session = await getSession();
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <div
       className="flex items-center justify-center bg-background"
@@ -17,11 +24,11 @@ const SignUp = () => {
             Create your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+        <form className="mt-8 space-y-6" action={register}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <Label htmlFor="name" className="sr-only">
-                Full Name
+                User Name
               </Label>
               <Input
                 id="name"
@@ -61,13 +68,24 @@ const SignUp = () => {
                 placeholder="Password"
               />
             </div>
+            <div>
+              <Label htmlFor="password" className="sr-only">
+                Password
+              </Label>
+              <Input
+                id="conformPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="confirm-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 bg-white text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="Password"
+              />
+            </div>
           </div>
 
           <div>
-            <Button
-              type="submit"
-              className="w-full bg-white text-black hover:bg-slate-100"
-            >
+            <Button className="w-full bg-white text-black hover:bg-slate-100">
               Sign up
             </Button>
           </div>

@@ -1,11 +1,18 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "@/action/user";
+import { getSession } from "@/lib/getSession";
+import { redirect } from "next/navigation";
 
-const Login = () => {
+const Login = async () => {
+  const session = await getSession();
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <div
       className="flex items-center justify-center bg-background"
@@ -17,7 +24,7 @@ const Login = () => {
             Sign in to your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+        <form className="mt-8 space-y-6" action={login}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <Label htmlFor="email-address" className="sr-only">
@@ -55,7 +62,7 @@ const Login = () => {
               className="w-full bg-white text-black hover:bg-slate-100"
             >
               Sign in
-            </Button>
+            </Button> 
           </div>
         </form>
         <div className="text-center">
