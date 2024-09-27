@@ -3,9 +3,10 @@ import localFont from "next/font/local";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import { NavbarComponent } from "@/components/Navbar";
+import { NavbarComponent } from "@/components/OldNavbar";
 import Footer from "@/components/Footer";
 import { SessionProvider } from "next-auth/react";
+import { Navbar } from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,16 +26,17 @@ export const metadata: Metadata = {
   description: "Track your spending and investments",
 };
 
-export default function RootLayout({
-  children,
+export default async function RootLayout({
+  children, 
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider>
-          <NavbarComponent />
+          <Navbar />
           <main
             className="container mx-auto mt-8 px-4"
             style={{ minHeight: "calc(100vh - 210px)" }}

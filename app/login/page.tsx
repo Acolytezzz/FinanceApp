@@ -24,7 +24,7 @@ const Login = async () => {
             Sign in to your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" action={login}>
+        <form className="mt-8 space-y-6" action={login} >
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <Label htmlFor="email-address" className="sr-only">
@@ -59,7 +59,7 @@ const Login = async () => {
           <div>
             <Button
               type="submit"
-              className="w-full bg-white text-black hover:bg-slate-100"
+              className="w-full bg-white text-black hover:bg-slate-100"            
             >
               Sign in
             </Button> 
