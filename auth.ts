@@ -4,6 +4,10 @@ import connectDB from "@/lib/db";
 import User from "@/models/Users";
 import { compare } from "bcryptjs";
 
+export const config = {
+  runtime: 'nodejs',
+};
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
