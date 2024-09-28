@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/action/user";
 import { getSession } from "@/lib/getSession";
-import { redirect } from "next/navigation";
+import { redirect } from "next/navigation"; 
 
 const Login = async () => {
   const session = await getSession();

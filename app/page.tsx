@@ -9,9 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowRight, DollarSign, TrendingUp } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
-  
   return (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold text-center">Welcome to FinTrack</h1>
@@ -32,10 +32,11 @@ export default function Home() {
               Keep a close eye on where your money goes and stay within your
               budget.
             </p>
+
             <Button asChild>
-              <a href="/spending">
+              <Link href="/spending">
                 Go to Spending <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -51,9 +52,9 @@ export default function Home() {
               time.
             </p>
             <Button asChild>
-              <a href="/investments">
+              <Link href="/investments">
                 Go to Investments <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
           </CardContent>
         </Card>

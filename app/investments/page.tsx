@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 type Stock = {
   id: number;
@@ -22,6 +24,14 @@ const fetchStockPrice = async (symbol: string): Promise<number> => {
 };
 
 const Investment = () => {
+  const { data: session, status } = useSession();
+
+  const user = session?.user;
+
+  if (status === "unauthenticated") {
+    redirect("/login");
+  }
+
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [symbol, setSymbol] = useState("");
   const [shares, setShares] = useState("");

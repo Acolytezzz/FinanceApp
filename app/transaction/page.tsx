@@ -24,7 +24,7 @@ type Transaction = {
   createdAt: string;
 };
 
-const SpendingTracker = () => {
+const SpendingTransaction = () => {
   const { data: session, status } = useSession();
 
   const id = session?.user?.id;
@@ -46,6 +46,8 @@ const SpendingTracker = () => {
     };
     fetchTransactions();
   }, [id]);
+
+  console.log(transactions);
 
   const addTransaction = async () => {
     if (!amount || !category || !type) {
@@ -171,4 +173,4 @@ const SpendingTracker = () => {
   );
 };
 
-export default SpendingTracker;
+export default SpendingTransaction;
