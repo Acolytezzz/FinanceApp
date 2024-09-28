@@ -1,14 +1,12 @@
 "use server";
 
 import { signIn } from "@/auth";
-import connectDB from "@/lib/db";
-import User from "@/models/Users";
 import bcrypt from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { redirect } from "next/navigation";
 
 export const config = {
-  runtime: 'nodejs',
+  runtime: "nodejs",
 };
 
 const login = async (formData: FormData) => {
@@ -42,6 +40,9 @@ const register = async (formData: FormData) => {
   if (password !== confirmPassword) {
     return { error: "Password do not match" };
   }
+
+  const { default: connectDB } = await import("@/lib/db");
+  const { default: User } = await import("@/models/Users");
 
   await connectDB();
 
