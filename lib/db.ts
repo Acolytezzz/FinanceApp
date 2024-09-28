@@ -1,15 +1,12 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import connect from "./connect";
+import mongoose from "mongoose";
 
-const connectDB =
-  (handler: NextApiHandler) =>
-  async (req: NextApiRequest, res: NextApiResponse) => {
-    await connect();
-    return handler(req, res);
-  };
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI as string);
+  } catch (error) {
+    throw new Error("Connection failed!");
+    process.exit(1);
+  }
+};
 
 export default connectDB;
-
-export const config = {
-  runtime: "nodejs",
-};

@@ -3,6 +3,10 @@ import connectDB from "@/lib/db";
 import { NextResponse, NextRequest } from "next/server";
 import { getSession } from "@/lib/getSession";
 
+export const config = {
+  runtime: "nodejs",
+};
+
 export async function GET() {
   await connectDB();
 
