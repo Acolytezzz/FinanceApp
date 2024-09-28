@@ -4,9 +4,7 @@ interface Params {
   id: string;
 }
 
-export const config = {
-  runtime: "nodejs",
-};
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest, { params }: { params: Params }) {
   const { default: connectDB } = await import("@/lib/db");

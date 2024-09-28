@@ -5,9 +5,7 @@ import bcrypt from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { redirect } from "next/navigation";
 
-export const config = {
-  runtime: "nodejs",
-};
+export const runtime = "nodejs";
 
 const login = async (formData: FormData) => {
   const email = formData.get("email") as string;

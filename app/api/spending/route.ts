@@ -1,9 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getSession } from "@/lib/getSession";
 
-export const config = {
-  runtime: "nodejs",
-};
+export const runtime = "nodejs";
 
 export async function GET() {
   const { default: connectDB } = await import("@/lib/db");
