@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type Transaction = {
-  id: number;
+  _id: "string";
   type: "income" | "expense";
   amount: number;
   category: string;
@@ -26,7 +27,8 @@ type Transaction = {
 
 const SpendingTracker = () => {
   const { data: session, status } = useSession();
-
+  const router = useRouter();
+  
   const id = session?.user?.id;
 
   if (status === "unauthenticated") {
@@ -40,12 +42,20 @@ const SpendingTracker = () => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (!id) {
+        console.log("User ID is not defined yet");
+        return;
+      }
       const response = await fetch(`/api/spending/${id}`);
       const data = await response.json();
       setTransactions(data.transactions);
     };
     fetchTransactions();
+    router.refresh();
   }, [id]);
+
+  console.log(transactions);
+  
 
   const addTransaction = async () => {
     if (!amount || !category || !type) {
@@ -106,7 +116,12 @@ const SpendingTracker = () => {
               </div>
               <div>
                 <Label htmlFor="type">Type</Label>
-                <Select value={type}>
+                <Select
+                  value={type}
+                  onValueChange={(value: "income" | "expense") =>
+                    setType(value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -150,7 +165,7 @@ const SpendingTracker = () => {
               .reverse()
               .map((transaction) => (
                 <div
-                  key={transaction.id}
+                  key={transaction._id}
                   className={`p-2 rounded ${
                     transaction.type === "income"
                       ? "bg-green-100"

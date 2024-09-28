@@ -1,8 +1,8 @@
+import connectDB from "@/lib/db";
+import User from "@/models/Users";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-
-export const runtime = "nodejs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -19,9 +19,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!email || !password) {
           throw new CredentialsSignin("Please provide an email and password");
         }
-
-        const { default: connectDB } = await import("@/lib/db");
-        const { default: User } = await import("@/models/Users");
 
         await connectDB();
 

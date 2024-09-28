@@ -1,12 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getSession } from "@/lib/getSession";
-
-export const runtime = "nodejs";
+import connectDB from "@/lib/db";
+import User from "@/models/Users";
 
 export async function GET() {
-  const { default: connectDB } = await import("@/lib/db");
-  const { default: User } = await import("@/models/Users");
-
   await connectDB();
 
   try {
@@ -42,9 +39,6 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const { default: connectDB } = await import("@/lib/db");
-  const { default: User } = await import("@/models/Users");
-
   await connectDB();
 
   try {
