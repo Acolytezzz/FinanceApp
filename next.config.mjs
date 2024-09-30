@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+import path from 'path';
+
 const nextConfig = {
   // experimental: {
   //   esmExternals: "loose", // <-- Keeping this for external ES module support
@@ -14,7 +16,7 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      mongoose: require.resolve('mongoose'),
+      mongoose: path.resolve('./node_modules/mongoose'),
     };
     return config;
   },
