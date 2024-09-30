@@ -3,8 +3,6 @@ import { getSession } from "@/lib/getSession";
 import connectDB from "@/lib/db";
 import User from "@/models/Users";
 
-export const runtime = "nodejs";
-
 export async function GET() {
   await connectDB();
 

@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-import path from 'path';
 
 const nextConfig = {
   // experimental: {
@@ -13,16 +12,16 @@ const nextConfig = {
   //   };
   //   return config;
   // },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      mongoose: path.resolve('./node_modules/mongoose'),
-    };
-    return config;
-  },
-  experimental: {
-    runtime: 'nodejs',
-  },
+  // webpack: (config) => {
+  //   config.resolve.alias = {
+  //     ...config.resolve.alias,
+  //     mongoose: path.resolve('./node_modules/mongoose'),
+  //   };
+  //   return config;
+  // },
+  // experimental: {
+  //   runtime: 'nodejs',
+  // },
 };
 
 export default nextConfig;
