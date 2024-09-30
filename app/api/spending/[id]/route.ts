@@ -6,6 +6,8 @@ interface Params {
   id: string;
 }
 
+export const runtime = "nodejs";
+
 export async function GET(req: NextRequest, { params }: { params: Params }) {
   await connectDB();
 
