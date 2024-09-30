@@ -20,7 +20,7 @@ const login = async (formData: FormData) => {
     });
   } catch (error) {
     const err = error as CredentialsSignin;
-    return err;
+    return err
   }
   redirect("/");
 };

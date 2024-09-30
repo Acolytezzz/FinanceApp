@@ -28,10 +28,6 @@ const Investment = () => {
 
   const user = session?.user;
 
-  if (status === "unauthenticated") {
-    redirect("/login");
-  }
-
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [symbol, setSymbol] = useState("");
   const [shares, setShares] = useState("");
@@ -84,110 +80,119 @@ const Investment = () => {
   );
   const totalGain = totalValue - totalCost;
 
-  return (
-    <div className="space-y-8">
-      <h1 className="text-4xl font-bold">Investment Tracker</h1>
-      <div className="grid md:grid-cols-2 gap-6">
+  if (status === "loading") {
+    return <div className="text-center text-2xl text-white">Loading...</div>;
+  } else if (status === "authenticated") {
+    return (
+      <div className="space-y-8">
+        <h1 className="text-4xl font-bold">Investment Tracker</h1>
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Stock</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  addStock();
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <Label htmlFor="symbol">Stock Symbol</Label>
+                  <Input
+                    id="symbol"
+                    value={symbol}
+                    onChange={(e) => setSymbol(e.target.value)}
+                    placeholder="Enter stock symbol"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="shares">Number of Shares</Label>
+                  <Input
+                    id="shares"
+                    type="number"
+                    value={shares}
+                    onChange={(e) => setShares(e.target.value)}
+                    placeholder="Enter number of shares"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="purchasePrice">Purchase Price</Label>
+                  <Input
+                    id="purchasePrice"
+                    type="number"
+                    value={purchasePrice}
+                    onChange={(e) => setPurchasePrice(e.target.value)}
+                    placeholder="Enter purchase price"
+                    required
+                  />
+                </div>
+                <Button type="submit">Add Stock</Button>
+              </form>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p>Total Value: ${totalValue.toFixed(2)}</p>
+                <p>Total Cost: ${totalCost.toFixed(2)}</p>
+                <p
+                  className={`font-bold ${
+                    totalGain >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  Total Gain/Loss: ${totalGain.toFixed(2)} (
+                  {((totalGain / totalCost) * 100).toFixed(2)}%)
+                </p>
+              </div>
+              <Button onClick={updatePrices} className="mt-4">
+                Update Prices
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
-            <CardTitle>Add Stock</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                addStock();
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <Label htmlFor="symbol">Stock Symbol</Label>
-                <Input
-                  id="symbol"
-                  value={symbol}
-                  onChange={(e) => setSymbol(e.target.value)}
-                  placeholder="Enter stock symbol"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="shares">Number of Shares</Label>
-                <Input
-                  id="shares"
-                  type="number"
-                  value={shares}
-                  onChange={(e) => setShares(e.target.value)}
-                  placeholder="Enter number of shares"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="purchasePrice">Purchase Price</Label>
-                <Input
-                  id="purchasePrice"
-                  type="number"
-                  value={purchasePrice}
-                  onChange={(e) => setPurchasePrice(e.target.value)}
-                  placeholder="Enter purchase price"
-                  required
-                />
-              </div>
-              <Button type="submit">Add Stock</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Portfolio Summary</CardTitle>
+            <CardTitle>Your Stocks</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p>Total Value: ${totalValue.toFixed(2)}</p>
-              <p>Total Cost: ${totalCost.toFixed(2)}</p>
-              <p
-                className={`font-bold ${
-                  totalGain >= 0 ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                Total Gain/Loss: ${totalGain.toFixed(2)} (
-                {((totalGain / totalCost) * 100).toFixed(2)}%)
-              </p>
+              {stocks.map((stock) => {
+                const currentValue = stock.shares * stock.currentPrice;
+                const purchaseValue = stock.shares * stock.purchasePrice;
+                const gain = currentValue - purchaseValue;
+                const gainPercentage = (gain / purchaseValue) * 100;
+                return (
+                  <div key={stock.id} className="p-2 rounded bg-gray-100">
+                    <p className="font-semibold">
+                      {stock.symbol} - {stock.shares} shares
+                    </p>
+                    <p>Current Price: ${stock.currentPrice.toFixed(2)}</p>
+                    <p>Purchase Price: ${stock.purchasePrice.toFixed(2)}</p>
+                    <p
+                      className={gain >= 0 ? "text-green-600" : "text-red-600"}
+                    >
+                      Gain/Loss: ${gain.toFixed(2)} ({gainPercentage.toFixed(2)}
+                      %)
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-            <Button onClick={updatePrices} className="mt-4">
-              Update Prices
-            </Button>
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Stocks</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {stocks.map((stock) => {
-              const currentValue = stock.shares * stock.currentPrice;
-              const purchaseValue = stock.shares * stock.purchasePrice;
-              const gain = currentValue - purchaseValue;
-              const gainPercentage = (gain / purchaseValue) * 100;
-              return (
-                <div key={stock.id} className="p-2 rounded bg-gray-100">
-                  <p className="font-semibold">
-                    {stock.symbol} - {stock.shares} shares
-                  </p>
-                  <p>Current Price: ${stock.currentPrice.toFixed(2)}</p>
-                  <p>Purchase Price: ${stock.purchasePrice.toFixed(2)}</p>
-                  <p className={gain >= 0 ? "text-green-600" : "text-red-600"}>
-                    Gain/Loss: ${gain.toFixed(2)} ({gainPercentage.toFixed(2)}%)
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+    );
+  } else if (status === "unauthenticated") {
+    redirect("/login");
+  }
 };
 
 export default Investment;

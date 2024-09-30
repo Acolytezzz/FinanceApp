@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 type Transaction = {
   _id: "string";
@@ -27,13 +26,8 @@ type Transaction = {
 
 const SpendingTracker = () => {
   const { data: session, status } = useSession();
-  const router = useRouter();
-  
-  const id = session?.user?.id;
 
-  if (status === "unauthenticated") {
-    redirect("/login");
-  }
+  const id = session?.user?.id;
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [amount, setAmount] = useState("");
@@ -43,7 +37,6 @@ const SpendingTracker = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       if (!id) {
-        console.log("User ID is not defined yet");
         return;
       }
       const response = await fetch(`/api/spending/${id}`);
@@ -51,13 +44,10 @@ const SpendingTracker = () => {
       setTransactions(data.transactions);
     };
     fetchTransactions();
-    router.refresh();
   }, [id]);
 
-  console.log(transactions);
-  
-
-  const addTransaction = async () => {
+  const addTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!amount || !category || !type) {
       return alert("All Fields are required");
     }
@@ -70,9 +60,15 @@ const SpendingTracker = () => {
     if (res.status === 200) {
       const data = await res.json();
       alert(data.message);
+      const response = await fetch(`/api/spending/${id}`);
+      const updatedData = await response.json();
+      setTransactions(updatedData.transactions);
     } else {
       alert("Error posting user");
     }
+    setAmount("");
+    setCategory("");
+    setType("expense");
   };
 
   const totalIncome = transactions
@@ -83,107 +79,113 @@ const SpendingTracker = () => {
     .reduce((sum, t) => sum + t.amount, 0);
   const balance = totalIncome - totalExpenses;
 
-  return (
-    <div className="space-y-8">
-      <h1 className="text-4xl font-bold">Spending Tracker</h1>
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Add Transaction</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4" onSubmit={addTransaction}>
-              <div>
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Input
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="Enter category"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="type">Type</Label>
-                <Select
-                  value={type}
-                  onValueChange={(value: "income" | "expense") =>
-                    setType(value)
-                  }
+  if (status === "loading") {
+    return <div className="text-center text-2xl text-white">Loading...</div>;
+  } else if (status === "authenticated") {
+    return (
+      <div className="space-y-8">
+        <h1 className="text-4xl font-bold">Spending Tracker</h1>
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Transaction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4" onSubmit={addTransaction}>
+                <div>
+                  <Label htmlFor="amount">Amount</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="Enter category"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="type">Type</Label>
+                  <Select
+                    value={type}
+                    onValueChange={(value: "income" | "expense") =>
+                      setType(value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="income">Income</SelectItem>
+                      <SelectItem value="expense">Expense</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button type="submit">Add Transaction</Button>
+              </form>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p>Total Income: ${totalIncome?.toFixed(2)}</p>
+                <p>Total Expenses: ${totalExpenses?.toFixed(2)}</p>
+                <p
+                  className={`font-bold ${
+                    balance >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="income">Income</SelectItem>
-                    <SelectItem value="expense">Expense</SelectItem>
-                  </SelectContent>
-                </Select>
+                  Balance: ${balance.toFixed(2)}
+                </p>
               </div>
-              <Button type="submit">Add Transaction</Button>
-            </form>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
-            <CardTitle>Summary</CardTitle>
+            <CardTitle>Recent SpendingTransaction</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p>Total Income: ${totalIncome?.toFixed(2)}</p>
-              <p>Total Expenses: ${totalExpenses?.toFixed(2)}</p>
-              <p
-                className={`font-bold ${
-                  balance >= 0 ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                Balance: ${balance.toFixed(2)}
-              </p>
+              {transactions
+                ?.slice()
+                .reverse()
+                .map((transaction) => (
+                  <div
+                    key={transaction._id}
+                    className={`p-2 rounded ${
+                      transaction.type === "income"
+                        ? "bg-green-100"
+                        : "bg-red-100"
+                    }`}
+                  >
+                    <p className="font-semibold">{transaction.category}</p>
+                    <p>
+                      ${transaction.amount.toFixed(2)} -{" "}
+                      {transaction.createdAt.split("T")[0]}
+                    </p>
+                  </div>
+                ))}
             </div>
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent SpendingTransaction</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {transactions
-              ?.slice()
-              .reverse()
-              .map((transaction) => (
-                <div
-                  key={transaction._id}
-                  className={`p-2 rounded ${
-                    transaction.type === "income"
-                      ? "bg-green-100"
-                      : "bg-red-100"
-                  }`}
-                >
-                  <p className="font-semibold">{transaction.category}</p>
-                  <p>
-                    ${transaction.amount.toFixed(2)} -{" "}
-                    {transaction.createdAt.split("T")[0]}
-                  </p>
-                </div>
-              ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+    );
+  } else if (status === "unauthenticated") {
+    redirect("/login");
+  }
 };
 
 export default SpendingTracker;
