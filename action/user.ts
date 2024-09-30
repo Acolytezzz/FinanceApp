@@ -1,5 +1,12 @@
 "use server";
 
+export const config = {
+  unstable_allowDynamic: [
+    '/lib/utilities.js', // allows a single file
+    '/node_modules/function-bind/**', // use a glob to allow anything in the function-bind 3rd party module
+  ],
+};
+
 import connectDB from "@/lib/db";
 import User from "@/models/Users";
 import { signIn } from "@/auth";
