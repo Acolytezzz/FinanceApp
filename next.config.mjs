@@ -11,6 +11,16 @@ const nextConfig = {
   //   };
   //   return config;
   // },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      mongoose: require.resolve('mongoose'),
+    };
+    return config;
+  },
+  experimental: {
+    runtime: 'nodejs',
+  },
 };
 
 export default nextConfig;
